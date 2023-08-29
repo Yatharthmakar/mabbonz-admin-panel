@@ -10,7 +10,6 @@ export default function ShowDetail() {
     useEffect(()=>{
         const data = location.state?.data;
         setData(data);
-        console.log(data);
     },[]);
     
   return (

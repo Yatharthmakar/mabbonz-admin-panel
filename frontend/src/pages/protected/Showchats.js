@@ -9,30 +9,36 @@ export default function ShowChats() {
     const [messages, setMessages] = useState();
     const chatWindowRef = useRef(null);
     const [data, setData] = useState();
+    const [timezone, setTimezone] = useState();
     const location = useLocation();
 
-    useEffect(() => { 
+    useEffect(() => {
         const data = location.state?.data;
-        setData(data);
+        setData(data.storeName);
+        let text = data.timezone
+        let pattern = /(\+|\-)\d+.\d+/;
+        let result = text.match(pattern);
+        let done = result[0];
+        let finall = Number(done.replace(":", "."));
+        setTimezone(finall);
+
     }, []);
 
     const getChats = async () => {
         setIsLoading(true);
-        console.log(data);
-        const response = await fetch("http://localhost:5000/getChats", {
+        const response = await fetch("/getChats", {
             method: 'post',
-            body: JSON.stringify({ "storeName": location.state?.data }),
+            body: JSON.stringify({ "storeName": location.state?.data.storeName }),
             headers: {
                 'Content-Type': 'application/json'
             },
         });
         const result = await response.json();
-        console.log(result);
         setMessages(result);
         setIsLoading(false);
     };
 
-    useEffect(() => {   
+    useEffect(() => {
         getChats();
     }, []);
 
@@ -48,15 +54,15 @@ export default function ShowChats() {
         };
 
         setIsLoading(true);
-        await fetch("http://localhost:5000/setChats", {
+        await fetch("/setChats", {
             method: 'post',
-            body: JSON.stringify({ "storeName": data, "message": messageValue }),
+            body: JSON.stringify({ "storeName": data, "message": messageValue, "timezone": timezone }),
             headers: {
                 'Content-Type': 'application/json'
             },
         });
 
-        const response = await fetch("http://localhost:5000/getChats", {
+        const response = await fetch("/getChats", {
             method: 'post',
             body: JSON.stringify({ "storeName": data }),
             headers: {
@@ -64,7 +70,6 @@ export default function ShowChats() {
             },
         });
         const result = await response.json();
-        console.log("result", result);
         setMessages(result);
         setMessageValue('');
         setIsLoading(false);
@@ -74,8 +79,8 @@ export default function ShowChats() {
         <div>
             <Link to="/app/priceandtagapp"><button className="btn btn-xl">Back</button></Link>
             <TitleCard title={"Chats"}>
-            <button className="btn btn-primary" onClick={getChats}>Refresh</button>
-            <span className="loading loading-spinner loading-lg"></span>
+                <button className="btn btn-primary" onClick={getChats}>Refresh</button>
+                <span className="loading loading-spinner loading-lg"></span>
                 <div className='box' ref={chatWindowRef}>
                     {messages?.map((message) => {
                         return (

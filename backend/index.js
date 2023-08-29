@@ -17,82 +17,85 @@ async function login() {
         const db = result.db('admin_panel');
         return db.collection('admin_details');
     }
-    catch(err){
+    catch (err) {
         console.log(err);
     }
 };
 
 async function userData() {
-    try{
-    const result = await mdbclient.connect();
-    const db = result.db('customers');
-    return db.collection('userdata');
-}
-catch(err){
-    console.log(err);
-}
+    try {
+        const result = await mdbclient.connect();
+        const db = result.db('customers');
+        return db.collection('userdata');
+    }
+    catch (err) {
+        console.log(err);
+    }
 };
 
 async function chats() {
-    try{
-    const result = await mdbclient.connect();
-    const db = result.db('priceandtagapp');
-    return db.collection('chats');
-}
-catch(err){
-    console.log(err);
-}
+    try {
+        const result = await mdbclient.connect();
+        const db = result.db('priceandtagapp');
+        return db.collection('chats');
+    }
+    catch (err) {
+        console.log(err);
+    }
 };
 
 const getChats = async (storeName) => {
-    try{
-    const db = await chats();
-    const response = await db.find({ "name": storeName }).toArray();
-    return response[0].chats;
-}
-catch(err){
-    console.log(err);
-}
+    try {
+
+        const db = await chats();
+        const response = await db.find({ "name": storeName }).toArray();
+        return response[0].chats;
+    }
+    catch (err) {
+        console.log(err);
+    }
 };
 
 const setChats = async (data) => {
-    try{
-    const db = await chats();
-    await db.updateOne({ "name": data.storeName }, { $push: { "chats": { "message": data.message, "time": currentDate(), "sender": 'Admin' } } });
-}
-catch(err){
-    console.log(err);
-}
+    try {
+        const db = await chats();
+        await db.updateOne({ "name": data.storeName }, { $push: { "chats": { "message": data.message, "time": currentDate(data.timezone), "sender": 'Admin' } } });
+    }
+    catch (err) {
+        console.log(err);
+    }
 };
 
-app.post('/longin', async (req, res) => {
-    try{
-    const db = await login();
-    const response = await db.find({ "email": req.body.email, "password": req.body.password }).toArray();
-    if (response.length != 0) {
-        res.send("1");
+app.post('/mapi/longin', async (req, res) => {
+    try {
+        const db = await login();
+        const response = await db.find({ "email": req.body.email, "password": req.body.password }).toArray();
+        if (response.length != 0) {
+            res.send("1");
+        }
+        else {
+            res.send("0");
+        }
     }
-    else {
-        res.send("0");
+    catch (err) {
+        console.log(err);
     }
-}
-catch(err){
-    console.log(err);
-}
 });
 
-app.get('/getuserdata', async (req, res) => {
-    try{
-    const db = await userData();
-    const response = await db.find().toArray();
-    res.send(response);
-}
-catch(err){
-    console.log(err);
-}
+app.get('/mapi/getuserdata', async (req, res) => {
+    console.log("UserData");
+    try {
+        const db = await userData();
+        const response = await db.find().toArray();
+        res.send(response);
+    }
+    catch (err) {
+        console.log(err);
+    }
 });
 
-app.post("/getChats", async (req, res) => {
+app.post("/mapi/getChats", async (req, res) => {
+    console.log("getChats");
     try {
         const response = await getChats(req.body.storeName);
 
@@ -103,7 +106,8 @@ app.post("/getChats", async (req, res) => {
     }
 });
 
-app.post("/setChats", async (req, res) => {
+app.post("/mapi/setChats", async (req, res) => {
+    console.log("setChats");
     try {
         const response = await setChats(req.body);
         res.send({ "response": "Success" });
@@ -113,4 +117,6 @@ app.post("/setChats", async (req, res) => {
     }
 });
 
-app.listen(5000);
+app.listen(5000, () => {
+    console.log("listing on port 5000");
+});

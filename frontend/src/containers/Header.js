@@ -8,7 +8,7 @@ import SunIcon from '@heroicons/react/24/outline/SunIcon'
 import { openRightDrawer } from '../features/common/rightDrawerSlice';
 import { RIGHT_DRAWER_TYPES } from '../utils/globalConstantUtil'
 
-import { NavLink,  Routes, Link , useLocation} from 'react-router-dom'
+import { NavLink,  Routes, Link , useLocation, useNavigate} from 'react-router-dom'
 
 
 function Header(){
@@ -16,6 +16,7 @@ function Header(){
     const dispatch = useDispatch()
     const {noOfNotifications, pageTitle} = useSelector(state => state.header)
     const [currentTheme, setCurrentTheme] = useState(localStorage.getItem("theme"))
+    const navigate = useNavigate();
 
     useEffect(() => {
         themeChange(false)
@@ -38,7 +39,7 @@ function Header(){
 
     function logoutUser(){
         localStorage.clear();
-        window.location.href = '/'
+        navigate("/login");
     }
 
     return(
