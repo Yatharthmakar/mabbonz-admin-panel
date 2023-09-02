@@ -66,7 +66,21 @@ const setChats = async (data) => {
     }
 };
 
-app.post('/mapi/longin', async (req, res) => {
+const deleteChats = async (data) => {
+    try {
+        const db = await chats();
+        await db.updateOne({ "name": data.storeName }, { $set: { "chats": [] }});
+    }
+    catch (err) {
+        console.log(err);
+    }
+};
+
+app.get('/malik/mapi/', (req, res) => {
+    res.send('Hello, this is the default message from Express!');
+  });
+
+app.post('/malik/mapi/longin', async (req, res) => {
     try {
         const db = await login();
         const response = await db.find({ "email": req.body.email, "password": req.body.password }).toArray();
@@ -82,7 +96,7 @@ app.post('/mapi/longin', async (req, res) => {
     }
 });
 
-app.get('/mapi/getuserdata', async (req, res) => {
+app.get('/malik/mapi/getuserdata', async (req, res) => {
     console.log("UserData");
     try {
         const db = await userData();
@@ -94,7 +108,7 @@ app.get('/mapi/getuserdata', async (req, res) => {
     }
 });
 
-app.post("/mapi/getChats", async (req, res) => {
+app.post("/malik/mapi/getChats", async (req, res) => {
     console.log("getChats");
     try {
         const response = await getChats(req.body.storeName);
@@ -106,7 +120,7 @@ app.post("/mapi/getChats", async (req, res) => {
     }
 });
 
-app.post("/mapi/setChats", async (req, res) => {
+app.post("/malik/mapi/setChats", async (req, res) => {
     console.log("setChats");
     try {
         const response = await setChats(req.body);
@@ -114,6 +128,17 @@ app.post("/mapi/setChats", async (req, res) => {
     }
     catch (err) {
         console.log("Setting chat error", err);
+    }
+});
+
+app.post("/malik/mapi/deleteChats", async (req, res) => {
+    console.log("deleteChats");
+    try {
+        const response = await deleteChats(req.body);
+        res.send({ "response": "Success" });
+    }
+    catch (err) {
+        console.log("Deleting chat error", err);
     }
 });
 

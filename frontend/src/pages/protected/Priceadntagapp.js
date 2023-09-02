@@ -40,10 +40,11 @@ export default function Priceadntagapp() {
     useEffect(() => {
         dispatch(setPageTitle({ title: "Price & Tag App" }))
         const fetchUserData = async () => {
-            const response = await fetch('/getuserdata');
+            const response = await fetch('https://tags.mabbonz.in/malik/mapi/getuserdata');
             const result = await response.json();
             setData(result);
             handleExport(result);
+            console.log(result);
         }
         fetchUserData();
         
@@ -87,7 +88,7 @@ export default function Priceadntagapp() {
                                             <td>{value.store_data.phone}</td>
                                             <td>{value.uninstalled_at === "-" ? "Installed" : "Uninstalled"}</td>
                                             <th><Link to="/app/showdetail" state={{ data: value }}><button className="btn btn-ghost btn-xs">Details</button></Link></th>
-                                            <th><Link to="/app/showchats" state={{ data: {"storeName": value.store_data.name, "timezone": value.store_data.timezone } }}><button className="btn btn-ghost btn-xs">Chats</button></Link></th>
+                                            <th><Link to="/app/showchats" state={{ data: {"storeName": value.storeName, "timezone": value.store_data.timezone } }}><button className="btn btn-ghost btn-xs">Chats</button></Link></th>
                                         </tr>
                                     )
                                 }

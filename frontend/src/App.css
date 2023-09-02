@@ -61,3 +61,8 @@
 .adminIcon{
   width: 15%;
 }
+
+.chat-buttons{
+  display: flex;
+  justify-content: space-between;
+}

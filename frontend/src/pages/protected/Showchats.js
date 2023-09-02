@@ -26,7 +26,7 @@ export default function ShowChats() {
 
     const getChats = async () => {
         setIsLoading(true);
-        const response = await fetch("/getChats", {
+        const response = await fetch("https://tags.mabbonz.in/malik/mapi/getChats", {
             method: 'post',
             body: JSON.stringify({ "storeName": location.state?.data.storeName }),
             headers: {
@@ -37,6 +37,21 @@ export default function ShowChats() {
         setMessages(result);
         setIsLoading(false);
     };
+
+    const deleteChats = async()=>{
+        setIsLoading(true);
+        const response = await fetch("https://tags.mabbonz.in/malik/mapi/deleteChats", {
+            method: 'post',
+            body: JSON.stringify({ "storeName": location.state?.data.storeName }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        const result = await response.json();
+        setMessages([]);
+        await getChats();
+        setIsLoading(false);
+    }
 
     useEffect(() => {
         getChats();
@@ -54,7 +69,7 @@ export default function ShowChats() {
         };
 
         setIsLoading(true);
-        await fetch("/setChats", {
+        await fetch("https://tags.mabbonz.in/malik/mapi/setChats", {
             method: 'post',
             body: JSON.stringify({ "storeName": data, "message": messageValue, "timezone": timezone }),
             headers: {
@@ -62,7 +77,7 @@ export default function ShowChats() {
             },
         });
 
-        const response = await fetch("/getChats", {
+        const response = await fetch("https://tags.mabbonz.in/malik/mapi/getChats", {
             method: 'post',
             body: JSON.stringify({ "storeName": data }),
             headers: {
@@ -79,7 +94,10 @@ export default function ShowChats() {
         <div>
             <Link to="/app/priceandtagapp"><button className="btn btn-xl">Back</button></Link>
             <TitleCard title={"Chats"}>
-                <button className="btn btn-primary" onClick={getChats}>Refresh</button>
+                <div className='chat-buttons'>
+                    <button className="btn btn-primary" onClick={getChats}>Refresh</button>
+                    <button className="btn btn-error" onClick={deleteChats}>Delete Chats</button>
+                </div>
                 <span className="loading loading-spinner loading-lg"></span>
                 <div className='box' ref={chatWindowRef}>
                     {messages?.map((message) => {
