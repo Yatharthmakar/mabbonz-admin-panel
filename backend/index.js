@@ -8,7 +8,7 @@ const cors = require('cors');
 app.use(express.json())
 app.use(cors());
 
-const url = "mongodb+srv://ranbirr314:gszC63K4Ytrl1Ogn@cluster0.na64i4d.mongodb.net/?retryWrites=true&w=majority";
+const url = "";
 const mdbclient = new MongoClient(url);
 
 async function login() {
